@@ -14,7 +14,7 @@ export function AuthForm() {
   const { toast } = useToast()
   const signInCredentials = form.handleSubmit(async (data) => {
     const { email } = data
-    await signIn('nodemailer', {email, redirect: false})
+    await signIn('nodemailer', {email, redirect: false, callbackUrl: 'http://localhost:3000/home'})
       .then((e) => {
         toast({
           title: "Magic link sent!",

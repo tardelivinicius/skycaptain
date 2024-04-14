@@ -6,7 +6,7 @@ export function About() {
     return (
       <div className="flex py-4 px-4 col-span-2">
         <div className="flex flex-col max-w-[800px] space-y-8">
-          <h1 className="text-4xl font-extrabold tracking-tight xl:text-5xl/none mt-2">
+          <h1 className="text-4xl font-extrabold xl:text-5xl/none mt-2 dark:text-black">
             Welcome to Skycaptain
           </h1>
           <div>
