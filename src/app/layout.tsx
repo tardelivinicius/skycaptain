@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { League_Spartan } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const koho = League_Spartan({ weight: '400', subsets: ["latin"] });
 
@@ -16,7 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={koho.className}>{children}</body>
+      <body className=
+      {koho.className}>{children}
+      <Toaster />
+      </body>
     </html>
   );
 }
