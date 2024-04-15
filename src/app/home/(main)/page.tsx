@@ -1,3 +1,4 @@
+'use client'
 import Link from "next/link"
 import {
   Activity,
@@ -30,9 +31,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-export default function Home() {
+import { UpdatePreferences } from "../_components/update-preferences"
+import { checkUserPreferences } from "./actions"
+import { useEffect, useState } from "react"
+
+export default function Page() {
+  const [openDialog, setOpenDialog] = useState(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      const showDialog = await checkUserPreferences();
+      setOpenDialog(showDialog);
+    };
+    fetchData();
+  }, []);
   return (
     <div className="flex min-h-screen w-full flex-col">
+      <UpdatePreferences openDialog={openDialog} />
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <Card x-chunk="dashboard-01-chunk-0">

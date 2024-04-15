@@ -2,9 +2,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// datasource db {
+//   provider          = "postgresql"
+//   url               = env("DATABASE_URL")
+// }
+
+
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Account {
@@ -49,10 +55,20 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
- 
+  preference    UserPreference? @relation(fields: [preferenceId], references: [id])
+  preferenceId Int?     @unique
   @@map("users")
 }
- 
+
+model UserPreference {
+  id          Int   @id @default(autoincrement())
+  user        User?
+  currency    String
+  weight      String
+  countryCode String @map("country_code")
+  @@map("user_preferences")
+}
+
 model VerificationToken {
   identifier String
   token      String

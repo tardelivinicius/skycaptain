@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUrl } from './lib/get-url'
-import { db } from './services/database'
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('authjs.session-token')
   const pathname = request.nextUrl.pathname
-
   if (pathname === '/' && token) {
     return NextResponse.redirect(new URL(getUrl('/home')))
   }
