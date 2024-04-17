@@ -14,11 +14,11 @@ import { ButtonSignOut } from './button-sign-out'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
   
-  type UserDropdownProps = {
-    user: Session['user']
-  }
-  
-  export function UserDropdownMenu({ user }: UserDropdownProps) {
+type UserDropdownProps = {
+  user: Session['user']
+}
+
+export function UserDropdownMenu({ user }: UserDropdownProps) {
     if (!user) return
     return (
         <DropdownMenu>
@@ -33,7 +33,6 @@ import Link from 'next/link'
         <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem><Link href='/home/settings'>Preferences</Link></DropdownMenuItem>
             <DropdownMenuItem><Link href='/home/settings'>Settings</Link></DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />

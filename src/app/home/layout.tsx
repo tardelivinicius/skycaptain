@@ -1,8 +1,7 @@
 import { PropsWithChildren } from 'react'
-import { MainHeader } from '@/app/home/_components/main-header'
+import MainHeader from '@/app/home/_components/main-header'
 import { auth } from '@/services/auth'
 import { ThemeProvider } from '../_components/theme-provider'
-import { UpdatePreferences } from './_components/update-preferences'
 import { Toaster } from '@/components/ui/toaster'
 
 export default async function Layout({ children }: PropsWithChildren) {

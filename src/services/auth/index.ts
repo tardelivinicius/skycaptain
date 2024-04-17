@@ -4,6 +4,7 @@ import EmailProvider from 'next-auth/providers/nodemailer'
 import Discord from "next-auth/providers/discord"
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { db } from '../database'
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: '/',

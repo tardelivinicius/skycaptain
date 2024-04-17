@@ -1,3 +1,4 @@
+'use client'
 import { Session } from 'next-auth'
 import Link from "next/link"
 import {
@@ -11,12 +12,23 @@ import { ModeToggle } from "@/app/home/_components/set-theme"
 import { Button } from '@/components/ui/button'
 import { UserDropdownMenu } from './user-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { checkUserFirstAccess } from '../(main)/actions'
+import { useEffect, useState } from 'react'
+import { UpdatePreferences } from './update-user'
 
 type MainHeaderProps = {
   user: Session['user']
 }
 
-export function MainHeader({ user }: MainHeaderProps) {
+export default function MainHeader({ user }: MainHeaderProps) {
+  const [openDialog, setOpenDialog] = useState(false);
+    useEffect(() => {
+      const fetchData = async () => {
+        const showDialog = await checkUserFirstAccess();
+        setOpenDialog(showDialog);
+      };
+      fetchData();
+  }, []);
   return(
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
@@ -38,13 +50,13 @@ export function MainHeader({ user }: MainHeaderProps) {
           href="#"
           className="text-muted-foreground transition-colors hover:text-foreground"
           >
-          Shop
+          Hangar
           </Link>
           <Link
           href="#"
           className="text-muted-foreground transition-colors hover:text-foreground"
           >
-          My flights
+          Flights
           </Link>
           <Link
           href="#"
@@ -103,20 +115,13 @@ export function MainHeader({ user }: MainHeaderProps) {
           </nav>
           </SheetContent>
       </Sheet>
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-          <form className="ml-auto flex-1 sm:flex-initial">
-          <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-              type="search"
-              placeholder="Search products..."
-              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-              />
+      <div className="relative flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+          <div className="ml-auto flex-1 sm:flex-initial relative">
           </div>
-          </form>
           <ModeToggle />
           <UserDropdownMenu user={user} />
       </div>
+      <UpdatePreferences openDialog={openDialog} setOpenDialog={setOpenDialog}/>
       </header>
     )
 }
