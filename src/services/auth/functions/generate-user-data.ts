@@ -1,7 +1,6 @@
 'use server'
-import { db } from '@/services/database'
+import db from '@/services/database'
 import { getRequestCountry } from "@/lib/get-request-country";
-import shuffle from 'lodash';
 export async function generateUserData(user: any) {
   // Esse método inicializa os dados de um usuário para o sistema
   // 1 - Gera um HUB (Aeroporto Principal) 

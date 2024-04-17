@@ -1,25 +1,34 @@
 'use server'
-
 import { getRequestCountry } from "@/lib/get-request-country"
 import { auth } from "@/services/auth"
-import { db } from '@/services/database'
+import db from '@/services/database'
+import { User } from "@/types/user"
 import { generateUserData } from '@/services/auth/functions/generate-user-data'
+
+export async function readUserData(): Promise<User | null> {
+  const session = await auth()
+  if(!session) return null
+  const user = await db.user.findFirst({
+    where: { id: session.user.id },
+    include: {
+      level: true,
+      preference: true,
+      _count: {
+        select: {
+          airports: true,
+          aircrafts: true
+        }
+      }
+    },
+  })
+  if(!user) return null
+  return user
+}
 
 export async function checkUserFirstAccess() {
   const session = await auth()
   if(!session) return true
   return session?.user.isFirstAccess
-}
-
-
-export async function getUserPreferences() {
-  const session = await auth()
-  const preferences = await db.userPreference.findFirst({
-    where: {
-      userId: session?.user.id
-    },
-  })
-  return preferences
 }
 
 interface UserPreferencesData {
@@ -67,7 +76,6 @@ export async function saveUserData({ data }: { data: UserPreferencesData }): Pro
 }
 
 export async function checkUsernameAvailability( username:string ): Promise<boolean> {
-  console.log('username', username)
   const session = await auth()
   const check = await db.user.findFirst({
     where: { 

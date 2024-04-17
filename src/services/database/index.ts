@@ -1,3 +1,27 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client'
 
-export const db = new PrismaClient()
+const prismaClientSingleton = () => {
+  return new PrismaClient().$extends({
+    query: {
+      user: {
+        async findFirst({ model, operation, args, query }) {
+          const user = await query(args)
+          if (user?.password !== undefined) {
+            user.password = '******'
+          }
+          return user
+        },
+      },
+    },
+  })
+};
+
+declare global {
+  var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>
+}
+
+const db = globalThis.prismaGlobal ?? prismaClientSingleton()
+
+export default db
+
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = db

@@ -15,9 +15,10 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { checkUserFirstAccess } from '../(main)/actions'
 import { useEffect, useState } from 'react'
 import { UpdatePreferences } from './update-user'
+import { User } from '@/types/user'
 
 type MainHeaderProps = {
-  user: Session['user']
+  user: User | null
 }
 
 export default function MainHeader({ user }: MainHeaderProps) {
@@ -27,7 +28,7 @@ export default function MainHeader({ user }: MainHeaderProps) {
         const showDialog = await checkUserFirstAccess();
         setOpenDialog(showDialog);
       };
-      fetchData();
+    fetchData();
   }, []);
   return(
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">

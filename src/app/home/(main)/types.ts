@@ -1,4 +1,4 @@
 import { ReturnTypeWithoutPromise } from '@/types/return-type'
-import { getUserPreferences } from './actions'
+import { readUserData } from './actions'
 
-export type UserPreference = ReturnTypeWithoutPromise<typeof getUserPreferences>
+export type User = ReturnTypeWithoutPromise<typeof readUserData>

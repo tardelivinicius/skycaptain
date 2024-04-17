@@ -1,9 +1,9 @@
-import NextAuth from "next-auth"
+import NextAuth, { Session } from "next-auth"
 import Google from "next-auth/providers/google"
 import EmailProvider from 'next-auth/providers/nodemailer'
 import Discord from "next-auth/providers/discord"
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import { db } from '../database'
+import db from '../database'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
@@ -12,6 +12,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     newUser: '/home',
     error: '/',
     verifyRequest: '/'
+  },
+  session: {
+    strategy: "jwt",
+    maxAge: 48 * 60 * 60, // 2 Dias
   },
   adapter: PrismaAdapter(db),
   providers: [
@@ -25,5 +29,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
     Discord,
   ],
+  callbacks: {
+    async session({ session }:{session: any}) {
+      if(session) {
+        session.user = await db.user.findFirst({
+          where: {email: session.user.email}
+        })
+      }
+      return session
+    }
+  },
   secret: process.env.AUTH_SECRET
 })

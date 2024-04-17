@@ -1,16 +1,17 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, CreditCard, DollarSign, Plane, PlaneLanding, Users, Warehouse } from "lucide-react";
+import { DollarSign, Plane, PlaneLanding, Warehouse } from "lucide-react";
 import { getCurrencytype } from "@/lib/get-currency-type";
-import { UserPreference } from "../(main)/types";
-import { MdTravelExplore } from "react-icons/md";
+import { User } from "@/types/user";
+import { UserOverviewSerializer } from '@/services/serializers/user'
 
-
-type UserPreferences = {
-  data: UserPreference
+type UserProps = {
+  user: User | null
 }
 
-export function OverviewCards({ data }: UserPreferences) {
+export function OverviewCards({ user }: UserProps) {
+  if(!user) return
+  const data = UserOverviewSerializer(user)
   return (
     <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
       <Card x-chunk="dashboard-01-chunk-0">
@@ -21,7 +22,7 @@ export function OverviewCards({ data }: UserPreferences) {
           <Plane className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">10</div>
+          <div className="text-2xl font-bold">{data.qty_aircrafts}</div>
           <p className="text-xs text-muted-foreground">
             +1 from last month
           </p>
@@ -35,7 +36,7 @@ export function OverviewCards({ data }: UserPreferences) {
           <Warehouse className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">42</div>
+          <div className="text-2xl font-bold">{data.qty_airports}</div>
           <p className="text-xs text-muted-foreground">
             +18 from last month
           </p>
@@ -59,7 +60,7 @@ export function OverviewCards({ data }: UserPreferences) {
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{getCurrencytype(data?.currency)} 930.000,00</div>
+          <div className="text-2xl font-bold">{getCurrencytype(data.currency)} 930.000,00</div>
           <p className="text-xs text-muted-foreground">
             +19% since last month
           </p>

@@ -31,9 +31,14 @@ import { checkUsernameAvailability, saveUserData } from "../(main)/actions"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { User } from "@/types/user"
 
+type UpdateProfileProps = {
+  openDialog: User['isFirstAccess'],
+  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-export function UpdatePreferences({ openDialog, setOpenDialog}: { openDialog: boolean, setOpenDialog: React.Dispatch<React.SetStateAction<boolean>> }) {
+export function UpdatePreferences({ openDialog, setOpenDialog}: UpdateProfileProps) {
   const [inputValue, setInputValue] = useState('');
   const timerDuration = 1000; // Tempo em milissegundos
   const [checkUsername, setcheckUsername] = useState(true)
