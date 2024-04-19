@@ -1,11 +1,11 @@
 import { PropsWithChildren } from 'react'
-import MainHeader from '@/app/home/_components/main-header'
 import { ThemeProvider } from '../_components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
-import { readUserData } from './(main)/actions'
+import { auth } from '@/services/auth'
+import Sidebar from './_components/sidebar'
 
 export default async function Layout({ children }: PropsWithChildren) {
-  const user = await readUserData()
+  const session = await auth()
   return (
     <div>
       <ThemeProvider
@@ -14,7 +14,7 @@ export default async function Layout({ children }: PropsWithChildren) {
       enableSystem
       disableTransitionOnChange
       >
-      <MainHeader user={user} />
+      <Sidebar />
       <main>{children}</main>
       <Toaster />
       </ThemeProvider>

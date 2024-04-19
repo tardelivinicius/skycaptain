@@ -1,4 +1,4 @@
 import { ReturnTypeWithoutPromise } from '@/types/return-type'
-import { readUserData } from './actions'
+import { getUserLastFlights } from './actions'
 
-export type User = ReturnTypeWithoutPromise<typeof readUserData>
+export type lastFlights = ReturnTypeWithoutPromise<typeof getUserLastFlights>[0]

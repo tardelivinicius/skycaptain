@@ -31,17 +31,18 @@ import { checkUsernameAvailability, saveUserData } from "../(main)/actions"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { User } from "@/types/user"
+import { Session } from "next-auth"
 
-type UpdateProfileProps = {
-  openDialog: User['isFirstAccess'],
-  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+type UserProps = {
+  user: Session['user'] | undefined
 }
 
-export function UpdatePreferences({ openDialog, setOpenDialog}: UpdateProfileProps) {
+
+export function DialogUpdateUser({ user }: UserProps) {
+  const [openDialog, setOpenDialog]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const timerDuration = 1000; // Tempo em milissegundos
   const [checkUsername, setcheckUsername] = useState(true)
+  const timerDuration = 1000; 
   let timer : any;
   const { toast } = useToast()
 
@@ -67,8 +68,6 @@ export function UpdatePreferences({ openDialog, setOpenDialog}: UpdateProfilePro
     }),
   })
 
-  const usernameSchema = z.string().min(4);
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     mode: "all"
@@ -90,9 +89,6 @@ export function UpdatePreferences({ openDialog, setOpenDialog}: UpdateProfilePro
     return () => clearTimeout(timer);
   }, [inputValue]);
 
-  useEffect(() => {
-   form.trigger('username');
-  }, []);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     await saveUserData({ data: { username: data.username, currency: data.currency, weight: data.weight } })
@@ -112,6 +108,9 @@ export function UpdatePreferences({ openDialog, setOpenDialog}: UpdateProfilePro
     form.trigger('username');
   };
 
+  useEffect(() => {
+    setOpenDialog(user?.isFirstAccess || false);
+  }, []);
 
   return (
     <div>

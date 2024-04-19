@@ -1,4 +1,5 @@
 import { User } from "@/types/user"
+import { Session } from "next-auth";
 
 export interface SerializedUser {
   id: string;
@@ -10,7 +11,7 @@ export interface SerializedUser {
 
 export function UserSerializer(user: User | null): SerializedUser {
   return {
-    id: user?.id,
+    id: user?.id ?? '',
     username: user?.username ?? null,
     name: user?.name ?? null,
     email: user?.email ?? null,
@@ -19,15 +20,19 @@ export function UserSerializer(user: User | null): SerializedUser {
 }
 
 interface SerializerOverViewUser {
-  qty_airports: number;
-  qty_aircrafts: number;
+  qtyAirports: number;
+  qtyAircrafts: number;
   currency: string | undefined
+  flightsCompleted: number
+  totalEarned: number
 }
 
-export function UserOverviewSerializer(user: User | null): SerializerOverViewUser {
+export function UserOverviewSerializer(user: Session['user'] | null): SerializerOverViewUser {
   return {
-    qty_airports: user?._count.airports ?? 0,
-    qty_aircrafts: user?._count.aircrafts ?? 0,
-    currency: user?.preference?.currency
+    qtyAirports: (user?._count.licenses ?? 0) + (user?._count.airports ?? 0),
+    qtyAircrafts: user?._count.aircrafts ?? 0,
+    currency: user?.preference?.currency,
+    flightsCompleted: 0,
+    totalEarned: 0.00
   };
 }

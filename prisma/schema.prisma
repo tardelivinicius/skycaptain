@@ -63,6 +63,8 @@ model User {
   aircrafts    UserAircraft[]
   isFirstAccess  Boolean @map("first_access") @default(true)
   licenses     UserAirportLicense[]
+  flights      UserFlight[]
+  status            Int          @default(1)
   @@map("users")
 }
 
@@ -94,6 +96,7 @@ model UserLevel {
   multiplierFactor Int @map("multiplier_factor") @default(0) 
   isActive         Boolean @default(true)
   User             User[]
+  color            String @default("bronze")
   @@map("user_levels")
 }
 
@@ -108,6 +111,8 @@ model Airport {
   is_international  Boolean @default(false)
   user_airports     UserAirportHub[]
   licenses          UserAirportLicense[]
+  departures        UserFlight[] @relation("departures")
+  arrivals          UserFlight[] @relation("arrivals")
   @@map("airports")
 }
 
@@ -128,6 +133,7 @@ model Aircraft {
   iata_code       String?
   icao_code       String?
   user_aircrafts  UserAircraft[]
+  flights         UserFlight[]
   @@map("aircrafts")
 }
 
@@ -150,4 +156,58 @@ model UserAirportLicense {
   is_active Boolean  @default(true)
 
   @@map("user_airport_licenses")
+}
+
+model UserFlight {
+  // Atributos
+  id                Int          @id @default(autoincrement())
+  flight_uuid       String      
+  flight_code       String      
+  passengers        Int          @default(0)
+  payment           Float        @default(0.00)
+  distance          Float        @default(0.00)
+  xp                Float        @default(0.00)
+  fuel              Float        @default(0.00)
+  status            Int          @default(1)
+  createdAt         DateTime     @default(now())
+  // Relacionamentos
+  departure         Airport      @relation("departures", fields: [departureId], references: [id])
+  departureId       Int
+  arrival           Airport      @relation("arrivals", fields: [arrivalId], references: [id])
+  arrivalId         Int
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+  aircraft          Aircraft     @relation(fields: [aircraftId], references: [id])
+  aircraftId        Int
+  logs              UserFlightLog[]
+  completes         UserFlightComplete[]
+  @@map("user_flights")
+}
+// Definição do modelo UserFlightLog
+model UserFlightLog {
+  // Atributos
+  id                Int          @id @default(autoincrement())
+  type_slug         String
+  log               String
+  status            Int          @default(1)
+  createdAt         DateTime     @default(now())
+  // Relacionamentos
+  userFlight        UserFlight   @relation(fields: [userFlightId], references: [id])
+  userFlightId      Int
+
+  @@map("user_flight_logs")
+}
+
+
+model UserFlightComplete {
+  // Atributos
+  id                Int          @id @default(autoincrement())
+  payment           Float        @default(0.00)
+  xp                Float        @default(0.00)
+  processed         Boolean      @default(false)
+  createdAt         DateTime     @default(now())
+  // Relacionamentos
+  userFlight        UserFlight   @relation(fields: [userFlightId], references: [id])
+  userFlightId      Int
+  @@map("user_complete_flights")
 }

@@ -2,33 +2,27 @@
 import { getRequestCountry } from "@/lib/get-request-country"
 import { auth } from "@/services/auth"
 import db from '@/services/database'
-import { User } from "@/types/user"
 import { generateUserData } from '@/services/auth/functions/generate-user-data'
 
-export async function readUserData(): Promise<User | null> {
+// Função usada para retornar os ultimos voos do usuário
+export async function getUserLastFlights() {
   const session = await auth()
-  if(!session) return null
-  const user = await db.user.findFirst({
-    where: { id: session.user.id },
-    include: {
-      level: true,
-      preference: true,
-      _count: {
-        select: {
-          airports: true,
-          aircrafts: true
+  const lastFlights = await db.userFlight.findMany({
+    where: {
+      userId: session?.user?.id,
+    },
+    include:{
+      arrival: true,
+      departure: true,
+      aircraft: true,
+      user: {
+        include: {
+          preference: true
         }
       }
-    },
+    }
   })
-  if(!user) return null
-  return user
-}
-
-export async function checkUserFirstAccess() {
-  const session = await auth()
-  if(!session) return true
-  return session?.user.isFirstAccess
+  return lastFlights
 }
 
 interface UserPreferencesData {
@@ -37,6 +31,7 @@ interface UserPreferencesData {
   weight: string;
 }
 
+// Função usada para salvar os dados básicos do usuário
 export async function saveUserData({ data }: { data: UserPreferencesData }): Promise<boolean> {
   try {
     const session = await auth()
@@ -75,6 +70,7 @@ export async function saveUserData({ data }: { data: UserPreferencesData }): Pro
     }
 }
 
+// Função usada para retornar se um nickname já existe ou não
 export async function checkUsernameAvailability( username:string ): Promise<boolean> {
   const session = await auth()
   const check = await db.user.findFirst({

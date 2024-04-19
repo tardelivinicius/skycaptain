@@ -30,11 +30,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Discord,
   ],
   callbacks: {
-    async session({ session }:{session: any}) {
+    async session({ session, token }:{session: any, token: any}) {
       if(session) {
-        session.user = await db.user.findFirst({
-          where: {email: session.user.email}
+        const currentUser = await db.user.findFirst({
+          where: { id: token.sub },
+          include: {
+            level: true,
+            preference: true,
+            _count: {
+              select: {
+                airports: true,
+                aircrafts: true,
+                licenses: true,
+              }
+            }
+          },
         })
+
+        if (currentUser && currentUser.level) {
+          const nextLevel = await db.userLevel.findFirst({
+            where: { id: { gt: currentUser.level.id } },
+            orderBy: { id: 'asc' },
+          })
+    
+          session.user = {
+            ...currentUser,
+            nextLevel,
+          }
+        }
       }
       return session
     }

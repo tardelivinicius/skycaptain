@@ -1,3 +1,5 @@
+import { Airport } from "@prisma/client";
+
 export interface User {
   id: string;
   username?: string | null;
@@ -16,7 +18,9 @@ export interface User {
   _count: { 
     aircrafts: number;
     airports: number;
+    licenses: number;
   };
+  nextLevel: Level | null;
 }
 
 export interface Level {
@@ -26,6 +30,7 @@ export interface Level {
   totalXP: number;
   multiplierFactor: number;
   isActive: boolean;
+  color: string;
 }
 
 export interface UserPreference {
