@@ -8,42 +8,19 @@ export async function generateUserData(user: any) {
   // 3 - Da a aeronave a320Neo para iniciar o processo.
   const reqCountryCode = await getRequestCountry()
   if(user.isFirstAccess){
-    const results = await db.$queryRawUnsafe(
+    const results : Array<Object> = await db.$queryRawUnsafe(
       // DO NOT pass in or accept user input here
       `SELECT * FROM "airports" WHERE country_code LIKE '${reqCountryCode}' and is_international = 1 ORDER BY RANDOM() LIMIT 5;`,
     )
-    // @TODO - VERIFICAR O ERRO DE TYPE COM INDEX
-    // Get the main hub
-    await db.userAirportHub.create({
-        data: { 
-          userId: user?.id,
-          airportId: results[0].id,
-        }
-      });
-    // Give another 4 licenses to the user
-    await db.userAirportLicense.create({
-      data: { 
-        userId: user.id, 
-        airportId: results[1].id
-      },
-    });
-    await db.userAirportLicense.create({
-      data: { 
-        userId: user.id, 
-        airportId: results[2].id
-      },
-    });
-    await db.userAirportLicense.create({
-      data: { 
-        userId: user.id, 
-        airportId: results[3].id
-      },
-    });
-    await db.userAirportLicense.create({
-      data: { 
-        userId: user.id, 
-        airportId: results[4].id
-      },
+    // Give 5 licenses to the user
+    await db.userAirportLicense.createMany({
+      data: [
+        { userId: user.id, airportId: results[0].id },
+        { userId: user.id, airportId: results[1].id },
+        { userId: user.id, airportId: results[2].id },
+        { userId: user.id, airportId: results[3].id },
+        { userId: user.id, airportId: results[4].id },
+      ],
     });
     // Give A320 Neo to the user
     const aircraft = await db.aircraft.findFirst({ where: { icao_code: 'A20N' } })

@@ -59,7 +59,6 @@ model User {
   preferenceId  Int?            @unique
   level        UserLevel? @relation(fields: [levelId], references: [id])
   levelId      Int?
-  airports     UserAirportHub[]
   aircrafts    UserAircraft[]
   isFirstAccess  Boolean @map("first_access") @default(true)
   licenses     UserAirportLicense[]
@@ -109,22 +108,12 @@ model Airport {
   lng               Float
   country_code      String 
   is_international  Boolean @default(false)
-  user_airports     UserAirportHub[]
   licenses          UserAirportLicense[]
   departures        UserFlight[] @relation("departures")
   arrivals          UserFlight[] @relation("arrivals")
   @@map("airports")
 }
 
-model UserAirportHub {
-  id        Int       @id @default(autoincrement())
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  airport   Airport?  @relation(fields: [airportId], references: [id])
-  airportId Int
-  is_main   Boolean  @default(true)
-  @@map("user_airport_hubs")
-}
 
 model Aircraft {
   id              Int       @id @default(autoincrement())

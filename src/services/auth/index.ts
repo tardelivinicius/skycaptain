@@ -39,7 +39,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             preference: true,
             _count: {
               select: {
-                airports: true,
                 aircrafts: true,
                 licenses: true,
               }
@@ -52,10 +51,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             where: { id: { gt: currentUser.level.id } },
             orderBy: { id: 'asc' },
           })
-    
+          const licenses = await db.userAirportLicense.findMany({
+            where: {userId: currentUser.id},
+            include: {
+              airport: true
+            }
+          })
+          const aicrafts = await db.userAircraft.findMany({
+            where: {userId: currentUser.id},
+            include: {
+              aircraft: true
+            }
+          })
+
           session.user = {
             ...currentUser,
             nextLevel,
+            licenses,
+            aicrafts
           }
         }
       }

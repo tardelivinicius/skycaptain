@@ -1,4 +1,4 @@
-'use server'
+'use client'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Plane, PlaneLanding, Subscript, SubscriptIcon, Warehouse } from "lucide-react";
 import { getCurrencytype } from "@/lib/get-currency-type";
@@ -8,26 +8,30 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 import { TbPremiumRights } from "react-icons/tb";
+import { useState } from "react";
+import UpsertFlight from "./upsert-flight";
 
 type UserProps = {
   user: Session['user'] | undefined
 }
 
-export async function OverviewCards({ user }: UserProps) {
+export function OverviewCards({ user }: UserProps) {
   if(!user) return
+  const [openSheet, setOpenSheet] = useState(false)
   const data = UserOverviewSerializer(user)
   return (
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+    <UpsertFlight openSheet={openSheet} setOpenSheet={setOpenSheet} user={user} />
     <Card className="sm:col-span-3" x-chunk="dashboard-05-chunk-0">
       <CardHeader className="">
         <CardTitle>Create flights with ease</CardTitle>
         <CardDescription className="max-w-lg text-balance leading-relaxed">
           Introducing our new flight creation feature. 
-          Our motive is to provide a seamless flight booking experience.aaaaaaaaaaaaaaaaaaaaaa
+          Our motive is to provide a seamless flight booking experience.
         </CardDescription>
       </CardHeader>
       <CardFooter>
-        <Button>Create New Flight</Button>
+        <Button onClick={() => setOpenSheet(true)}>Create New Flight</Button>
       </CardFooter>
     </Card>
     <Card x-chunk="dashboard-01-chunk-0">

@@ -9,7 +9,6 @@ type UserProps = {
 }
 export default function UserProfileCard({ user }: UserProps) {
   const colorClass = `overflow-hidden bg-${user?.level?.color}`;
-  console.log(colorClass)
   return (
     <Card className={colorClass} x-chunk="dashboard-05-chunk-4">
               <div className="bg-bronze bg-silver bg-black bg-diamond bg-gold"></div>

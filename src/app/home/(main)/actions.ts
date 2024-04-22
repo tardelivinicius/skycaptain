@@ -3,6 +3,7 @@ import { getRequestCountry } from "@/lib/get-request-country"
 import { auth } from "@/services/auth"
 import db from '@/services/database'
 import { generateUserData } from '@/services/auth/functions/generate-user-data'
+import { Aircraft, Airport } from "@/types/user"
 
 // Função usada para retornar os ultimos voos do usuário
 export async function getUserLastFlights() {
@@ -83,4 +84,37 @@ export async function checkUsernameAvailability( username:string ): Promise<bool
   })
   if(!check) return false
   return true
+}
+
+
+// interface FlightData {
+//   flight_code: string;
+//   distance: number;
+//   passengers: number;
+//   xp: number;
+//   payment: number;
+//   departureAirport: Airport;
+//   arrivalAirport: Airport;
+//   selectedAircraft: Aircraft;
+// }
+
+export async function saveUserFlight({ data }) {
+  const session = await auth()
+  if(!session) return false
+  const flight = await db.userFlight.create({
+    data: {
+      flight_code: data.flight_code,
+      flight_uuid: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+      passengers: data.passengers,
+      payment: data.payment,
+      distance: data.distance,
+      xp: data.xp,
+      status: 4,
+      departure: { connect: { id: data.departureAirport.airport.id } },
+      arrival: { connect: { id: data.arrivalAirport.airport.id } },
+      user: { connect: { id: session?.user.id } },
+      aircraft: { connect: { id: data.selectedAircraft.aircraft.id } },
+    }
+  })
+  return flight
 }

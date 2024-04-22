@@ -1,4 +1,4 @@
-'use client'
+'use server'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Link, PlaneTakeoff } from "lucide-react"
 import { Badge } from '@/components/ui/badge'
@@ -12,36 +12,35 @@ import {
     TableRow,
   } from '@/components/ui/table'
 import { lastFlights } from "../(main)/types"
+import { getUserLastFlights } from "../(main)/actions"
 
-type LastFlightsDataTable = {
-    data: lastFlights[]
-  }
-  
-  export function LastFlightCard({ data }: LastFlightsDataTable) {
+
+export async function LastFlightCard() {
+    const data: lastFlights[] = await getUserLastFlights();
     const statusColors = {
-        1: 'bg-blue-700 text-white',
-        2: 'bg-yellow-700 text-white',
-        3: 'bg-red-700 text-white',
-        4: 'bg-green-700 text-white',
+      1: 'bg-green-700 text-white',
+      2: 'bg-yellow-700 text-white',
+      3: 'bg-red-700 text-white',
+      4: 'bg-blue-700 text-white',
     };
 
     const getStatusText = (status: number) => {
         switch (status) {
           case 1:
-            return 'In progress';
+            return 'Finished';
           case 2:
             return 'Pending';
           case 3:
             return 'Canceled';
           case 4:
-            return 'Finished';
+            return 'In progress';
           default:
             return 'Unknown Status';
         }
       };
 
     return (
-        <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
+        <Card className="xl:col-span-1" x-chunk="dashboard-01-chunk-4">
         <CardHeader className="flex flex-row items-center">
           <div className="grid gap-2">
             <CardTitle className="flex flex-row items-center">Last flights<PlaneTakeoff className="ml-3 h-4 w-4 text-muted-foreground" /></CardTitle>
@@ -49,10 +48,6 @@ type LastFlightsDataTable = {
             See details of your most recent flights
             </CardDescription>
           </div>
-          <Button size="sm" className="ml-auto gap-1">
-            <Link href="/home/hangar">
-            </Link>
-          </Button>
         </CardHeader>
         <CardContent>
         <Table>
@@ -73,7 +68,7 @@ type LastFlightsDataTable = {
                     </TableCell>
                     <TableCell>
                         <div className="hidden text-sm text-muted-foreground md:inline">
-                            {e.arrival.name}
+                            {e.arrival.icao_code}
                         </div>
                     </TableCell>
                     <TableCell>
